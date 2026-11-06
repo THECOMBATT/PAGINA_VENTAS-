@@ -41,9 +41,10 @@ export default function Header({ currentTab, setCurrentTab }) {
 
     setSwitching(true);
     try {
-      // Intentar iniciar sesión como admin de la empresa seleccionada
+      // Iniciar sesión usando el email del admin — la contraseña debe ingresarse en Login
       const email = targetCompany.admin_email || `admin@${targetCompany.slug}.com`;
-      await login(email, 'admin123', targetCompany.slug);
+      const demoPassword = process.env.VITE_DEMO_PASSWORD || '';
+      await login(email, demoPassword, targetCompany.slug);
       setShowCompanyMenu(false);
       window.location.reload();
     } catch (err) {

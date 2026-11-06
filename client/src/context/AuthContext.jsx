@@ -27,6 +27,8 @@ export function AuthProvider({ children }) {
 
   // Validar sesión al montar
   useEffect(() => {
+    let cancelled = false;
+
     async function verifyAuth() {
       if (!token) {
         setLoading(false);
@@ -35,23 +37,30 @@ export function AuthProvider({ children }) {
 
       try {
         const data = await api.auth.me();
-        setUser(data.user);
-        setCompany(data.company);
-        localStorage.setItem('user', JSON.stringify(data.user));
-        localStorage.setItem('company', JSON.stringify(data.company));
+        if (!cancelled) {
+          setUser(data.user);
+          setCompany(data.company);
+          localStorage.setItem('user', JSON.stringify(data.user));
+          localStorage.setItem('company', JSON.stringify(data.company));
+        }
       } catch (err) {
-        console.warn('Sesión no válida o expirada:', err.message);
-        logout();
+        if (!cancelled) {
+          console.warn('Sesión no válida o expirada:', err.message);
+          logout();
+        }
       } finally {
-        setLoading(false);
+        if (!cancelled) setLoading(false);
       }
     }
 
-    verifyAuth();
+    verifyAuth().catch((err) => console.error('verifyAuth error:', err));
 
     const handleUnauthorized = () => logout();
     window.addEventListener('auth:unauthorized', handleUnauthorized);
-    return () => window.removeEventListener('auth:unauthorized', handleUnauthorized);
+    return () => {
+      cancelled = true;
+      window.removeEventListener('auth:unauthorized', handleUnauthorized);
+    };
   }, [token]);
 
   const login = async (email, password, companySlug) => {

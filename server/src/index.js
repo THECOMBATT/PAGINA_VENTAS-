@@ -18,8 +18,27 @@ const dashboardRoutes = require('./routes/dashboardRoutes');
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+// Orígenes permitidos para CORS (configurable vía variable de entorno)
+const allowedOrigins = process.env.CORS_ALLOWED_ORIGINS
+  ? process.env.CORS_ALLOWED_ORIGINS.split(',')
+  : ['http://localhost:5173', 'http://localhost:4173', 'http://localhost:3000'];
+
+const corsOptions = {
+  origin: (origin, callback) => {
+    // Permitir peticiones sin origen (curl, Postman, server-to-server)
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error(`CORS: origen no permitido: ${origin}`));
+    }
+  },
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true
+};
+
 // Middlewares globales
-app.use(cors());
+app.use(cors(corsOptions));
 app.use(express.json());
 
 // Logging simple de peticiones en consola
