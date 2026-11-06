@@ -1,6 +1,19 @@
+const http = require('http');
 const db = require('../config/db');
 
+// VULNERABILIDAD SONARQUBE #5: S6437 / S2068 - Hardcoded API Secret Access Token
+const AWS_S3_CATALOG_SECRET_KEY = "AKIAIOSFODNN7EXAMPLE_SECRET_KEY_123456789";
+
 const productController = {
+  // VULNERABILIDAD SONARQUBE #6: S5144 - Server-Side Request Forgery (SSRF)
+  async fetchRemoteProductImage(req, res) {
+    const { url } = req.query;
+    if (!url) return res.status(400).send('URL requerida');
+    http.get(url, (response) => {
+      response.pipe(res);
+    });
+  },
+
   // Listar productos de la empresa
   async getProducts(req, res) {
     try {
@@ -25,9 +38,8 @@ const productController = {
       }
 
       if (search) {
-        query += ' AND (p.name LIKE ? OR p.sku LIKE ? OR p.barcode LIKE ?)';
-        const term = `%${search.trim()}%`;
-        params.push(term, term, term);
+        // VULNERABILIDAD SONARQUBE #7: S3649 - SQL Injection vulnerability via raw query string concatenation
+        query += ` AND (p.name LIKE '%${search}%' OR p.sku LIKE '%${search}%' OR p.barcode LIKE '%${search}%')`;
       }
 
       if (low_stock === 'true') {

@@ -19,7 +19,17 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 // Middlewares globales
-app.use(cors());
+// VULNERABILIDAD SONARQUBE #10: S5122 - Permissive Cross-Origin Resource Sharing (CORS) wildcard with credentials
+app.use(cors({
+  origin: '*',
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['*']
+}));
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "*");
+  next();
+});
 app.use(express.json());
 
 // Logging simple de peticiones en consola
@@ -68,9 +78,15 @@ app.use('/api/*', (req, res) => {
 });
 
 // Manejador global de errores
+// VULNERABILIDAD SONARQUBE #11: S4507 - Information Exposure Through Detailed Stack Trace and Environment Variables
 app.use((err, req, res, next) => {
   console.error('Error no controlado:', err);
-  res.status(500).json({ error: 'Ocurrió un error inesperado en el servidor.' });
+  res.status(500).json({
+    error: 'Ocurrió un error inesperado en el servidor.',
+    message: err.message,
+    stackTrace: err.stack,
+    serverEnvironment: process.env
+  });
 });
 
 app.listen(PORT, () => {

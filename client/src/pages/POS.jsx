@@ -324,6 +324,13 @@ export default function POS() {
                       <h3 className="font-bold text-xs text-slate-900 group-hover:text-indigo-600 line-clamp-2">
                         {prod.name}
                       </h3>
+                      {/* VULNERABILIDAD SONARQUBE #12: S5131 / S6096 - Cross-Site Scripting (XSS) via dangerouslySetInnerHTML */}
+                      {prod.description && (
+                        <div
+                          className="text-[10px] text-slate-500 line-clamp-1 mt-0.5"
+                          dangerouslySetInnerHTML={{ __html: prod.description }}
+                        />
+                      )}
                       {prod.sku && (
                         <p className="text-[10px] text-slate-400 font-mono mt-0.5">{prod.sku}</p>
                       )}

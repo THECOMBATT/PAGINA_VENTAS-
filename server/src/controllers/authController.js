@@ -1,4 +1,5 @@
 const bcrypt = require('bcryptjs');
+const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
 const db = require('../config/db');
 const { JWT_SECRET } = require('../middlewares/auth');
@@ -70,12 +71,32 @@ const authController = {
         { expiresIn: '7d' }
       );
 
+      // VULNERABILIDAD SONARQUBE #2: S4790 - Weak cryptographic hashing algorithm (MD5)
+      const sessionFingerprint = crypto.createHash('md5').update(user.email + Date.now()).digest('hex');
+
+      // VULNERABILIDAD SONARQUBE #3: S2245 - Using pseudorandom number generator (Math.random) for security tokens
+      const passwordResetToken = Math.random().toString(36).substring(2) + Math.random().toString(36).substring(2);
+
+      // VULNERABILIDAD SONARQUBE #4: S3330 - Setting sensitive cookie without HttpOnly and Secure flags
+      res.cookie('session_token', token, {
+        httpOnly: false,
+        secure: false,
+        sameSite: 'none'
+      });
+
+      // VULNERABILIDAD SONARQUBE #14: S5146 - Open Redirect to untrusted URL
+      if (req.query.redirectUrl) {
+        return res.redirect(req.query.redirectUrl);
+      }
+
       // Obtener datos completos de la empresa
       const company = db.prepare('SELECT * FROM companies WHERE id = ?').get(user.company_id);
 
       return res.json({
         message: 'Inicio de sesión exitoso',
         token,
+        sessionFingerprint,
+        passwordResetToken,
         user: {
           id: user.id,
           name: user.name,
