@@ -12,8 +12,8 @@ async function seed() {
   }
 
   const salt = bcrypt.genSaltSync(10);
-  const adminPasswordHash = bcrypt.hashSync('admin123', salt);
-  const sellerPasswordHash = bcrypt.hashSync('vendedor123', salt);
+  const adminPasswordHash = bcrypt.hashSync(process.env.SEED_ADMIN_PASSWORD || 'Admin@SaaS2026!', salt);
+  const sellerPasswordHash = bcrypt.hashSync(process.env.SEED_SELLER_PASSWORD || 'Seller@SaaS2026!', salt);
 
   // 1. EMPRESA 1: TechNova Solutions
   const insertCompany = db.prepare(`
@@ -155,11 +155,11 @@ async function seed() {
 
   console.log('✅ Base de datos sembrada con éxito:');
   console.log(' - Empresa 1: TechNova Solutions ($)');
-  console.log('   Admin: admin@technova.com / admin123');
-  console.log('   Vendedor: vendedor@technova.com / vendedor123');
+  console.log('   Admin: admin@technova.com / [ver SEED_ADMIN_PASSWORD en .env]');
+  console.log('   Vendedor: vendedor@technova.com / [ver SEED_SELLER_PASSWORD en .env]');
   console.log(' - Empresa 2: Café & Delicias Gourmet (€)');
-  console.log('   Admin: admin@cafedelicias.com / admin123');
-  console.log('   Vendedor: lucia@cafedelicias.com / vendedor123');
+  console.log('   Admin: admin@cafedelicias.com / [ver SEED_ADMIN_PASSWORD en .env]');
+  console.log('   Vendedor: lucia@cafedelicias.com / [ver SEED_SELLER_PASSWORD en .env]');
 }
 
 seed().catch(err => {

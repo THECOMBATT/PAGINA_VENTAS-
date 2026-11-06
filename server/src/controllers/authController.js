@@ -1,3 +1,4 @@
+const crypto = require('crypto');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const db = require('../config/db');
@@ -118,7 +119,7 @@ const authController = {
       // Evitar colisión de slugs
       let existingSlug = db.prepare('SELECT id FROM companies WHERE slug = ?').get(slug);
       if (existingSlug) {
-        slug = `${slug}-${Math.floor(1000 + Math.random() * 9000)}`;
+        slug = `${slug}-${crypto.randomInt(1000, 9999)}`;
       }
 
       const salt = bcrypt.genSaltSync(10);
