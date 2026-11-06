@@ -1,5 +1,14 @@
+require('dotenv').config();
 const bcrypt = require('bcryptjs');
 const db = require('./db');
+
+function requireSeedEnv(name) {
+  const value = process.env[name];
+  if (!value) {
+    throw new Error(`Variable de entorno requerida para sembrado no definida: ${name}`);
+  }
+  return value;
+}
 
 async function seed() {
   console.log('--- Iniciando Sembrado de Base de Datos Multi-empresa (SaaS) ---');
@@ -12,8 +21,8 @@ async function seed() {
   }
 
   const salt = bcrypt.genSaltSync(10);
-  const adminPasswordHash = bcrypt.hashSync(process.env.SEED_ADMIN_PASSWORD || 'Admin@SaaS2026!', salt);
-  const sellerPasswordHash = bcrypt.hashSync(process.env.SEED_SELLER_PASSWORD || 'Seller@SaaS2026!', salt);
+  const adminPasswordHash = bcrypt.hashSync(requireSeedEnv('SEED_ADMIN_PASSWORD'), salt);
+  const sellerPasswordHash = bcrypt.hashSync(requireSeedEnv('SEED_SELLER_PASSWORD'), salt);
 
   // 1. EMPRESA 1: TechNova Solutions
   const insertCompany = db.prepare(`
