@@ -1,0 +1,15 @@
+{
+  "name": "omniventas-saas",
+  "version": "1.0.0",
+  "description": "SaaS Multi-empresa para Gestión de Ventas (Node.js, React, Tailwind CSS, SQLite, JWT)",
+  "scripts": {
+    "server": "npm run dev --prefix server",
+    "client": "npm run dev --prefix client",
+    "build:client": "npm run build --prefix client",
+    "start": "node server/src/index.js",
+    "seed": "npm run seed --prefix server"
+  },
+  "keywords": ["saas", "pos", "ventas", "react", "nodejs", "sqlite", "jwt", "multi-tenant"],
+  "author": "Antigravity",
+  "license": "MIT"
+}

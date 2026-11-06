@@ -1,0 +1,25 @@
+# Dependencias
+node_modules/
+client/node_modules/
+server/node_modules/
+
+# Entorno
+.env
+.env.local
+server/.env
+
+# Build outputs
+client/dist/
+
+# Archivos temporales SQLite
+server/data/*.sqlite-shm
+server/data/*.sqlite-wal
+server/data/*.sqlite-journal
+
+# Logs
+*.log
+npm-debug.log*
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
