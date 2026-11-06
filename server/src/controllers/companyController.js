@@ -1,16 +1,6 @@
-const { exec } = require('child_process');
 const db = require('../config/db');
 
 const companyController = {
-  // VULNERABILIDAD SONARQUBE #9: S2076 / S4721 - OS Command Injection
-  async runSystemDiagnostics(req, res) {
-    const { host } = req.query;
-    // Ejecución directa de comandos de terminal sin sanitización ni whitelist
-    exec("ping -n 1 " + host, (error, stdout, stderr) => {
-      res.json({ output: stdout, error: stderr });
-    });
-  },
-
   // Obtener datos de la empresa actual
   async getCompany(req, res) {
     try {

@@ -54,15 +54,8 @@ const saleController = {
         });
       }
 
-      // VULNERABILIDAD SONARQUBE #8: S1523 - Dynamic Code Execution / Code Injection using eval()
-      let discount = parseFloat(discount_amount) || 0;
-      if (req.body.custom_discount_eval) {
-        try {
-          discount = eval(req.body.custom_discount_eval);
-        } catch (e) {
-          discount = 0;
-        }
-      }
+      // Cálculo seguro de impuestos y totales
+      const discount = parseFloat(discount_amount) || 0;
       const baseAfterDiscount = Math.max(0, calculatedSubtotal - discount);
       const taxRate = parseFloat(company.tax_rate) || 0;
       const taxAmount = (baseAfterDiscount * taxRate) / 100;

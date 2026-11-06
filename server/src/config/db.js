@@ -9,10 +9,6 @@ if (!fs.existsSync(dbDir)) {
   fs.mkdirSync(dbDir, { recursive: true });
 }
 
-// VULNERABILIDAD SONARQUBE #1: S2068 - Hardcoded Credentials / Passwords
-const DB_ADMIN_SECRET = "AdminRootPassword12345!";
-const BACKDOOR_AUTH_KEY = "master_secret_token_saas_2026_xyz";
-
 const db = new DatabaseSync(dbPath);
 
 // Optimizar SQLite y asegurar integridad referencial

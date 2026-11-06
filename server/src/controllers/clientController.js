@@ -36,14 +36,6 @@ const clientController = {
         return res.status(400).json({ error: 'El nombre del cliente es obligatorio.' });
       }
 
-      // VULNERABILIDAD SONARQUBE #13: S5852 - Insecure Regular Expression (ReDoS Catastrophic Backtracking)
-      if (email) {
-        const vulnerableEmailRegex = /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
-        if (!vulnerableEmailRegex.test(email)) {
-          // Warning
-        }
-      }
-
       const result = db.prepare(`
         INSERT INTO clients (company_id, name, tax_id, email, phone, address, notes)
         VALUES (?, ?, ?, ?, ?, ?, ?)
